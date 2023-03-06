@@ -1,0 +1,67 @@
+HTTP MODÜLÜ
+http modülü, Node.js uygulamalarında web sunucusu oluşturmak, HTTP isteklerini ve yanıtlarını işlemek için kullanılır. Bu modül, web tarayıcıları ve diğer istemciler tarafından gönderilen HTTP isteklerini dinleyebilir ve bu isteklere yanıt olarak HTTP yanıtları gönderebilir.
+
+http modülü, aşağıdaki özellikleri ve yöntemleri içerir:
+
+http.createServer([options][, requestListener]): Yeni bir HTTP sunucusu oluşturur ve istekleri dinlemeye başlar. İkinci parametre, sunucu tarafından işlenecek istekleri ele alacak bir işlevdir.
+server.listen([port][, hostname][, backlog][, callback]): HTTP sunucusunu belirtilen bağlantı noktası ve ana bilgisayar üzerinde dinlemeye başlar. Dördüncü parametre olarak bir geri çağırma işlevi alabilir.
+server.on('request', callback): Sunucu bir istek aldığında tetiklenecek olay için bir dinleyici ekler.
+server.on('connection', callback): Yeni bir TCP bağlantısı oluşturulduğunda tetiklenecek bir olay için bir dinleyici ekler.
+server.close([callback]): HTTP sunucusunu durdurur ve artık yeni istekler almaz. İsteğe bağlı bir geri çağırma işlevi alabilir.
+http.request(options[, callback]): HTTP isteklerini göndermek için kullanılır. İkinci parametre, yanıtı işleyecek bir geri çağırma işlevi olabilir.
+http.get(options[, callback]): http.request() işlevine benzer, ancak sadece GET istekleri için kullanılır.
+http.Agent: HTTP isteklerini ve yanıtlarını yönetmek için kullanılır. Varsayılan olarak, her bir sunucu için ayrı bir ajan örneği oluşturulur.
+http modülü, ayrıca HTTPS sunucuları oluşturmak ve HTTPS isteklerini yönetmek için de kullanılabilir. Bunun için, https.createServer() işlevi kullanılır ve sunucu sertifikası ve anahtarı belirtilir.
+
+GET ve POST HTTP protokolünde iki farklı yöntemdir ve web uygulamalarında veri göndermek için kullanılırlar.
+GET yöntemi, belirtilen bir kaynağı almak için kullanılır. Yani bir sayfayı veya bir resmi görüntülemek için GET yöntemi kullanılır. GET yöntemi kullanıldığında, parametreler URL'in sonuna eklenir. Örneğin, https://www.example.com/search?q=hello gibi bir URL'de q parametresi hello değerine sahip olur.
+POST yöntemi ise, bir form göndermek, veri göndermek veya bir kaynak oluşturmak için kullanılır. POST yöntemi kullanıldığında, parametreler URL'de görünmez, ancak istek gövdesinde (request body) gönderilirler. Bu nedenle, POST yöntemi, kullanıcının göndermek istediği verilerin daha güvenli bir şekilde gönderilmesini sağlar.
+Bir diğer fark ise, GET yönteminin daha az güvenli olmasıdır. Çünkü parametreler URL'de açıkça görüntülenir ve bu nedenle kullanıcı adı ve şifre gibi özel bilgilerin bu şekilde gönderilmesi tavsiye edilmez. POST yöntemi ise, verilerin URL'de açıkça görüntülenmediği için daha güvenlidir.
+Bu nedenle, genellikle kullanıcıdan veri almak veya veri göndermek için bir form kullanılıyorsa, POST yöntemi kullanılırken, belirli bir kaynağı görüntülemek veya erişmek için GET yöntemi kullanılır.
+(HTTP GET ve POST yöntemleri, bir web sayfasındaki form verilerini sunucuya göndermek için kullanılır. Örneğin, bir kullanıcının bir web sitesine kaydolmak için adı, e-posta adresi ve şifre gibi bilgileri göndermesi gerekebilir.
+GET yöntemi, form verilerini URL parametreleri olarak gönderir. Bu, kullanıcının tarayıcısında görüntülenebilir ve genellikle küçük veri kümeleri için kullanılır. Örneğin, bir kullanıcının adı ve e-posta adresi gibi sınırlı sayıda bilgiyi göndermek istediği durumlarda GET yöntemi kullanılabilir.
+POST yöntemi ise, form verilerini HTTP istek gövdesinde gönderir. Bu, URL'de görüntülenmez ve daha büyük veri kümeleri için kullanılır. Örneğin, bir kullanıcının profil fotoğrafı veya diğer büyük dosyaları yüklemesi gerektiği durumlarda POST yöntemi kullanılabilir.)
+
+res.write(): Bu yöntem, HTTP yanıtının gövdesine veri yazmak için kullanılır. Örneğin, bir dosya indirme işlemi için dosya verisini yanıtın gövdesine yazmak için kullanılabilir. Veri yazıldıktan sonra, res.end() yöntemiyle HTTP yanıtı sonlandırılmalıdır.
+res.writeHead(): Bu yöntem, HTTP yanıtının başlığını ayarlamak için kullanılır. Bu yöntem, HTTP yanıtının status code(200,300gibi), Content-Type, Location, application/json  ve diğer HTTP başlıklarını belirlemek için kullanılabilir.(res.writeHead metodu, sunucunun isteğe verdiği yanıtın başlığını belirler. İlk parametre olarak verilen 200, HTTP yanıt kodu olarak kabul edilir ve "OK" anlamına gelir. Yani bu durumda, sunucu, isteği başarılı bir şekilde aldı ve yanıt olarak istenen içeriği döndürüyor..Eğer res.writeHead(300) şeklinde bir kod yazarsak, bu HTTP yanıt kodu olarak "Multiple Choices" anlamına gelir. Bu durumda sunucu, istenen kaynak hakkında birden fazla seçenek sunuyor ve kullanıcının seçim yapması gerekiyor. Ancak, 300 kodu genellikle tercih edilmeyen bir HTTP yanıt kodudur ve sıklıkla kullanılmaz.)
+
+const http = require('http');
+const server = http.createServer((req, res) => {
+  // HTTP başlıklarını ayarla
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+
+  // HTTP yanıtının gövdesine veri yaz
+  res.write('Merhaba Dünya!');
+
+  // HTTP yanıtını sonlandır                                     
+  res.end();
+});
+
+server.listen(3000, () => {
+  console.log('Sunucu 3000 portunda çalışıyor...');
+});
+Burada, res.writeHead(200, {'Content-Type': 'text/plain'}) yöntemiyle HTTP başlıkları ayarlanıyor ve res.write('Merhaba Dünya!') yöntemiyle HTTP yanıtının gövdesine veri yazılıyor. Son olarak, res.end() yöntemiyle HTTP yanıtı sonlandırılıyor. Bu şekilde, basit bir "Merhaba Dünya!" HTTP yanıtı oluşturuluyor.(Örneğin, bir web sunucusundan bir HTTP yanıtı aldığınızda, Content-Type başlığına "text/html" değeri atanmışsa, bu, sunucunun yanıtının bir HTML belgesi olduğunu ve istemcinin bu belgeyi HTML olarak işlemesi gerektiğini belirtir. Benzer şekilde, Content-Type başlığı "image/jpeg" değerine sahipse, sunucunun yanıtının bir JPEG resim dosyası olduğu ve istemcinin bu dosyayı görüntülemek için uygun bir şekilde işlemesi gerektiği anlamına gelir.)
+
+aşağıdaki örnekte http modülünü kullanarak bir HTTP sunucusu oluşturup, kullanıcının tarayıcısından "http://localhost:3000" adresine bir istek yapıldığında bir HTML dosyası gösteriyoruz.
+const http = require('http');
+const fs = require('fs');
+const port = 3000;
+const server = http.createServer((req, res) => {
+  if (req.url === '/') {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    fs.readFile('index.html', (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.write('File not found!');
+      } else {
+        res.write(data);
+      }
+      res.end();
+    });
+  }
+});
+server.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
+});
+(req.url özelliği, kullanıcının isteği yaptığı URL'yi içerir. Bu örnekte, eğer kullanıcının yaptığı istek, ana dizindeki (/) bir dosya ya da sayfa ise, yani kök dizinine yapılan bir istek ise, sunucu yanıt olarak belirtilen HTML dosyasını gösteriyor.
+Bu kod satırı, sadece kök dizine gelen istekleri kontrol ediyor ve farklı bir URL'ye yapılan istekleri işlemden geçirmiyor. Bu sayede sunucu, belirtilen kök dizininde bulunan sayfaları gösteriyor ve diğer sayfalara erişimi engelliyor.)
